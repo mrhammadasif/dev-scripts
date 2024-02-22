@@ -1,0 +1,2 @@
+ #!/usr/bin/env bash
+ for f in ./common/*.sh; do source $f; done
