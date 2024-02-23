@@ -1,6 +1,6 @@
 # fix this code
 declare -A Directories=(
-  ["admin"]="/Users/hammadasif/projects/edwire/EG.Applications.Admin/src/EdGraph.Applications.Admin.Web"
+  # ["admin"]="/Users/hammadasif/projects/edwire/EG.Applications.Admin/src/EdGraph.Applications.Admin.Web"
   ["launcher"]="/Users/hammadasif/projects/edwire/EG.Applications.Launcher/src/EdGraph.Applications.Launcher.Web"
   ["analytics"]="/Users/hammadasif/projects/edwire/EG.Applications.Analytics/src/EdGraph.Applications.Analytics.Web"
   ["datasync"]="/Users/hammadasif/projects/edwire/EG.Applications.DataSync/src/EdGraph.Applications.DataSync.Web"
