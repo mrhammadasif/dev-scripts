@@ -155,8 +155,3 @@ yarg.completion().help().version( '1.0' ).showHelpOnFail( true )
   .demandCommand( 1, red( 'You need at least one command before moving on' ) )
   .strictCommands()
   .parse()
-
-// if no command is given, print help
-// if ( process.argv.length === 2 ) {
-//   yarg.showHelp()
-// }
