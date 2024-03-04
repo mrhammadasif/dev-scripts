@@ -1,7 +1,10 @@
 #!/usr/bin/env node
-import { Apps, AppNames } from "./common/directories.mjs"
+import { Apps, AppNames, RepoNames } from "./common/directories.mjs"
 import { execSync } from "child_process"
+import { green } from 'kolorist'
+import { red } from 'kolorist'
 import prompts from "prompts"
+import { banner } from './common/utils.mjs'
 
 /** @type {prompts.PromptObject[]} */
 const questions = [
@@ -9,7 +12,7 @@ const questions = [
     type: 'autocompleteMultiselect',
     name: 'repos',
     message: 'Select Repos',
-    choices: AppNames.map( dir => ( {
+    choices: RepoNames.map( dir => ( {
       title: dir,
       value: dir,
       selected: false
@@ -94,15 +97,27 @@ const questions = [
   if ( args.open ) {
     command += ` --open`
   }
-  console.log( `Running command: ${command}` )
-
-  args.repos.forEach( appName => {
-    const dir = Apps[appName].path
-    const repoName = Apps[appName].repo
-    const cmd = command.replace( /\{repo\}/g, repoName ).replace( /\{dir\}/g, dir )
-    banner(appName)
-    const output = execSync( cmd, { cwd: dir } )
-    console.log( output.toString() )
+  console.log( `Running command: ${green(command)}` )
+  console.log( ' --- ' )
+  const confirmation = await prompts( {
+    type: 'confirm',
+    name: 'confirm',
+    message: red(`Do you want to run this command?`),
+    initial: true
   } )
+
+  if(confirmation.confirm === true) {
+    args.repos.forEach( appName => {
+      const dir = Apps[appName].path
+      const repoName = Apps[appName].repo
+      const cmd = command.replace( /\{repo\}/g, repoName ).replace( /\{dir\}/g, dir )
+      banner(appName, {
+        title: 'Open PR'
+      })
+      const output = execSync( cmd, { cwd: dir } )
+      console.log( output.toString() )
+    } )
+  }
+
 
 } )()
