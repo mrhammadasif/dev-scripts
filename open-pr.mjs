@@ -1,96 +1,108 @@
 #!/usr/bin/env node
-import { Directories, DirectoriesRepo } from "./common/directories.mjs"
+import { Apps, AppNames } from "./common/directories.mjs"
 import { execSync } from "child_process"
-import yargs from 'yargs'
-import { hideBin } from 'yargs/helpers'
-const yarg = yargs(hideBin(process.argv))
+import prompts from "prompts"
 
-yarg.option("open", {
-  alias: "o",
-  type: "boolean",
-  description: "Open PR in Browser"
-})
+/** @type {prompts.PromptObject[]} */
+const questions = [
+  {
+    type: 'autocompleteMultiselect',
+    name: 'repos',
+    message: 'Select Repos',
+    choices: AppNames.map( dir => ( {
+      title: dir,
+      value: dir,
+      selected: false
+    } ) ),
+  },
+  {
+    type: 'text',
+    name: 'title',
+    message: 'PR title',
+    validate: value => value.length > 0
+  },
+  {
+    type: 'text',
+    name: 'description',
+    message: 'PR description',
+    validate: value => value.length > 0
+  },
+  {
+    type: 'text',
+    name: 'targetBranch',
+    message: 'Target branch',
+    initial: 'main',
+    validate: value => value.length > 0
+  },
+  {
+    type: 'text',
+    name: 'sourceBranch',
+    message: 'Source branch',
+    validate: value => value.length > 0
+  },
+  {
+    type: 'list',
+    name: 'reviewers',
+    message: 'Reviewers (comma separated)',
+    validate: value => ( value.includes( '@' ) && value.length > 0 ),
+    initial: 'pablo@edwire.com',
+  },
+  {
+    type: 'list',
+    name: 'workItems',
+    validate: value => value.length > 0,
+    message: 'Work items (comma separated)'
+  },
+  {
+    type: 'confirm',
+    name: 'open',
+    message: 'Open PR in Browser',
+    initial: true
+  }
+];
 
-yarg.option("title", {
-  alias: "t",
-  type: "string",
-  demandOption: true,
-  description: "PR title"
-})
+; ( async () => {
+  const args = await prompts( questions, { onCancel: () => process.exit( 1 ) } )
+  console.log( args )
 
-yarg.option("description", {
-  alias: "d",
-  type: "string",
-  demandOption: true,
-  description: "PR description"
-})
+  let command = `az repos pr create`
+  // --repository "{repo}"
+  if ( args.targetBranch ) {
+    command += ` --target-branch "${args.targetBranch}"`
+  }
 
-yarg.option("targetBranch", {
-  alias: "tb",
-  type: "string",
-  demandOption: true,
-  description: "Target branch"
-})
+  if ( args.sourceBranch ) {
+    command += ` --source-branch "${args.sourceBranch}"`
+  }
 
-yarg.option("sourceBranch", {
-  alias: "sb",
-  type: "string",
-  default: "main",
-  description: "Source branch"
-})
+  if ( args.title ) {
+    command += ` --title "${args.title}"`
+  }
 
-yarg.option("reviewers", {
-  alias: "rv",
-  type: "string",
-  default: "pablo@edwire.com",
-  description: "Reviewers (comma separated)"
-})
+  if ( args.description ) {
+    command += ` --description "${args.description}"`
+  }
 
-yarg.option("workItems", {
-  alias: "w",
-  type: "string",
-  description: "Work items (comma separated)"
-})
+  if ( args.reviewers ) {
+    command += ` --reviewers "${args.reviewers.join( ',' )}"`
+  }
 
-const args = yarg.parse()
-let command = `az repos pr create`
+  if ( args.workItems ) {
+    command += ` --work-items "${args.workItems.join( ',' )}"`
+  }
 
-if (args.targetBranch) {
-  command += ` --target-branch ${args.targetBranch}`
-}
+  if ( args.open ) {
+    command += ` --open`
+  }
+  console.log( `Running command: ${command}` )
 
-if (args.sourceBranch) {
-  command += ` --source-branch ${args.sourceBranch}`
-}
+  args.repos.forEach( appName => {
+    const dir = Apps[appName].path
+    const repoName = Apps[appName].repo
+    const cmd = command.replace( /\{repo\}/g, repoName ).replace( /\{dir\}/g, dir )
+    banner(appName)
+    const output = execSync( cmd, { cwd: dir } )
+    console.log( output.toString() )
+  } )
 
-if (args.title) {
-  command += ` --title "${args.title}"`
-}
-
-if (args.description) {
-  command += ` --description "${args.description}"`
-}
-
-if (args.reviewers) {
-  command += ` --reviewers ${args.reviewers}`
-}
-
-if (args.workItems) {
-  command += ` --work-items ${args.workItems}`
-}
-
-if (args.open) {
-  command += ` --open`
-}
-
-console.log(`Running command: ${command}`)
-
-Object.keys(Directories).forEach(key => {
-  const dir = Directories[key]
-  const repoName = DirectoriesRepo[key]
-  command = command.replace(/\{repo\}/g, repoName).replace(/\{dir\}/g, dir)
-  console.log("-------------------------")
-  console.log(`---- Going to [${key}] ----`)
-  const output = execSync(command, { cwd: dir })
-  console.log(output.toString())
-});
+} )()
