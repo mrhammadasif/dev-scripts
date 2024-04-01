@@ -27,5 +27,5 @@ for key in "${!Directories[@]}"; do
   # git add .
   git add package.json
   git add pnpm-lock.yaml
-  git commit -m "update(shared-lib): #8098 update the shared library to ver:$version"
+  git commit -m "update(shared-lib): #8610 update the shared library to ver:$version"
 done

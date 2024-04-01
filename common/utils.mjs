@@ -14,18 +14,22 @@ export function padCenter ( string ) {
   return "-".repeat( left ) + string + "-".repeat( right )
 }
 
-export async function whichApps () {
+/** 
+ * @param {'apps' | 'services' | undefined} choice
+ * @param {boolean} single
+*/
+export async function whichApps (choice, single = false) {
   yarg.option("apps", {
     type: 'boolean',
-    default: false
+    default: choice === 'apps'
   })
   yarg.option("services", {
     type: 'boolean',
-    default: false
+    default: choice === 'services'
   })
   const args = await yarg.parse()
   let types = await prompts({
-    type: ( args.apps || args.services ) === true  ? null : 'autocompleteMultiselect',
+    type: ( args.apps || args.services ) === true  ? null : single ? 'autocomplete' : 'autocompleteMultiselect',
     name: 'types',
     message: 'Select Repos',
     choices: [
@@ -54,13 +58,13 @@ export async function whichApps () {
     ...( types.types.includes( 'services' ) ? ServiceNames : [] ),
   ]
   const resp = await prompts( {
-    type: 'autocompleteMultiselect',
+    type: single ? 'autocomplete' : 'autocompleteMultiselect',
     name: 'repos',
     message: 'Select Repos',
     choices: repos.map( appName => ( {
       title: appName,
       value: appName,
-      selected: appName === 'common' ? false : true
+      selected: false
     } ) ),
   }, { onCancel () { process.exit() } } )
   return resp.repos || []

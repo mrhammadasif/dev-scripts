@@ -90,6 +90,10 @@ export const Apps = {
     path: `${basePath}/EG.Applications.Management/src/EdGraph.Applications.Management.Web`,
     repo: "EG.Applications.Management"
   },
+  statereport: {
+    path: `${basePath}/EG.Applications.StateReporting/src/EdGraph.Applications.StateReporting.Web`,
+    repo: "EG.Applications.StateReporting"
+  },
 }
 
 export const AppNames = Object.keys( Apps )

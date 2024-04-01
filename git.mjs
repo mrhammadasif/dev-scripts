@@ -21,6 +21,62 @@ yarg.command( "stageall", "Stage all Files", async ( args ) => {
   } )
 } )
 
+yarg.command("merge", "Merge Branch to Dev", async (args) => {
+  const appChoices = [await whichApps('apps', true)]
+  
+  const resp = await prompts([
+    {
+      message: 'Merge current branch into development',
+      name: "merge",
+      type: 'confirm',
+      initial: true,
+    },
+  ], {
+    onCancel: () => {
+      process.exit(1)
+    }
+  })
+
+  if(resp.merge === false) {
+    console.log(red("Aborted"))
+    return process.exit(1)
+  }
+  const processed = appChoices.map(async appName => {
+    const targetBranch = (execSync('git branch --show', { cwd: Repos[appName].path }).toString()).trim()
+    banner(appName, {
+      title: 'Merge',
+    })
+
+    try {
+
+      const statusOutput = (execSync('git diff-index HEAD --stat', { cwd: Repos[appName].path }).toString())
+      const isClean = statusOutput.trim().length === 0
+      if (!isClean) {
+        console.error(red('Your working directory is not clean. Please commit or stash your changes before proceeding.'))
+        console.log(statusOutput)
+        return appName
+      }
+      console.log(execSync(`git checkout -q development`, { cwd: Repos[appName].path }).toString())
+      console.log(execSync(`git pull origin development`, { cwd: Repos[appName].path }).toString())
+      console.log(execSync(`git merge ${targetBranch}`, { cwd: Repos[appName].path }).toString())
+      console.log(execSync(`git push origin development`, { cwd: Repos[appName].path }).toString())
+      console.log(execSync(`git checkout -q ${targetBranch}`, { cwd: Repos[appName].path }).toString())
+      return true
+    } catch (error) {
+      console.error(error)
+      return appName
+    }
+  })
+  const result = await Promise.all(processed)
+  const errorful = result.filter(p => typeof p === 'string')
+
+  if (errorful.length > 0) {
+    console.log(red(`Errors in : ${errorful}`))
+  }
+  else {
+    console.log(green(`All Processed`))
+  }
+})
 
 
 yarg.command( "latest", "Fetch Latest", async ( _args ) => {

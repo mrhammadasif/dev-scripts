@@ -4,20 +4,11 @@ import { execSync } from "child_process"
 import { green } from 'kolorist'
 import { red } from 'kolorist'
 import prompts from "prompts"
-import { banner } from './common/utils.mjs'
+import { banner, whichApps } from './common/utils.mjs'
 
 /** @type {prompts.PromptObject[]} */
+
 const questions = [
-  {
-    type: 'autocompleteMultiselect',
-    name: 'repos',
-    message: 'Select Repos',
-    choices: RepoNames.map( dir => ( {
-      title: dir,
-      value: dir,
-      selected: false
-    } ) ),
-  },
   {
     type: 'text',
     name: 'title',
@@ -46,13 +37,15 @@ const questions = [
   {
     type: 'list',
     name: 'reviewers',
+    separator: ',',
     message: 'Reviewers (comma separated)',
     validate: value => ( value.includes( '@' ) && value.length > 0 ),
-    initial: 'pablo@edwire.com',
+    initial: 'pablo@edwire.com,jayson@edwire.com',
   },
   {
     type: 'list',
     name: 'workItems',
+    separator: ',',
     validate: value => value.length > 0,
     message: 'Work items (comma separated)'
   },
@@ -65,6 +58,7 @@ const questions = [
 ];
 
 ; ( async () => {
+  const appChoices = await whichApps()
   const args = await prompts( questions, { onCancel: () => process.exit( 1 ) } )
   console.log( args )
 
@@ -87,11 +81,11 @@ const questions = [
   }
 
   if ( args.reviewers ) {
-    command += ` --reviewers "${args.reviewers.join( ',' )}"`
+    command += ` --reviewers ${args.reviewers.map( r => `"${r}"` ).join(" ")}`
   }
 
   if ( args.workItems ) {
-    command += ` --work-items "${args.workItems.join( ',' )}"`
+    command += ` --work-items ${args.workItems.map( r => `${r}` ).join(" ")}`
   }
 
   if ( args.open ) {
@@ -107,7 +101,7 @@ const questions = [
   } )
 
   if(confirmation.confirm === true) {
-    args.repos.forEach( appName => {
+    appChoices.forEach( appName => {
       const dir = Apps[appName].path
       const repoName = Apps[appName].repo
       const cmd = command.replace( /\{repo\}/g, repoName ).replace( /\{dir\}/g, dir )
