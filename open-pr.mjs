@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { Apps, AppNames, RepoNames } from "./common/directories.mjs"
+import { Repos, AppNames, RepoNames } from "./common/directories.mjs"
 import { execSync } from "child_process"
 import { green } from 'kolorist'
 import { red } from 'kolorist'
@@ -102,8 +102,8 @@ const questions = [
 
   if(confirmation.confirm === true) {
     appChoices.forEach( appName => {
-      const dir = Apps[appName].path
-      const repoName = Apps[appName].repo
+      const dir = Repos[appName].path
+      const repoName = Repos[appName].repo
       const cmd = command.replace( /\{repo\}/g, repoName ).replace( /\{dir\}/g, dir )
       banner(appName, {
         title: 'Open PR'
