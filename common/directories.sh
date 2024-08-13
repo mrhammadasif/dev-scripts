@@ -8,6 +8,8 @@ declare -A Directories=(
   ["validation"]="/Users/hammadasif/projects/edwire/EG.Applications.Validations/src/EdGraph.Applications.Validations.Web"
   ["partner"]="/Users/hammadasif/projects/edwire/EG.Applications.Partner/src/EdGraph.Applications.Partner.Web"
   ["mgmt"]="/Users/hammadasif/projects/edwire/EG.Applications.Management/src/EdGraph.Applications.Management.Web"
+  ["statereporting"]="/Users/hammadasif/projects/edwire/EG.Applications.StateReporting/src/EdGraph.Applications.StateReporting.Web"
+  ["imsadmin"]="/Users/hammadasif/projects/edwire/EG.Applications.IMSAdmin/src/EdGraph.Applications.IMSAdmin.Web"
 )
 
 declare -A DirectoriesRepo=(
@@ -18,7 +20,9 @@ declare -A DirectoriesRepo=(
   ["edfiadmin"]="EG.Applications.EdFi.Admin"
   ["validation"]="EG.Applications.Validations"
   ["partner"]="EG.Applications.Partner"
-  ["mgmt"]="EG.Applications.Management"
+  ["imsadmin"]="EG.Applications.IMSAdmin"
+  # ["mgmt"]="EG.Applications.Management"
+  # ["statereporting"]="EG.Applications.StateReporting"
 )
 
 SharedRepo="/Users/hammadasif/projects/edwire/EG.Applications.Shared"

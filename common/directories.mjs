@@ -47,8 +47,12 @@ export const Services = {
     repo: "EG.HelmChart"
   },
   'svc-edFiOdsApi': {
-    path: `${basePath}/EG.Services.EdFi.OdsApi/src/EdGraph.Services.EdFi.OdsApi.Web`,
+    path: `${basePath}/EG.Services.EdFi.OdsApi`,
     repo: "EG.Services.EdFi.OdsApi"
+  },
+  'svc-edFiImsAdminService': {
+    path: `${basePath}/EG.Services.IMSAdmin`,
+    repo: "EG.Services.IMSAdmin"
   },
 
 }
@@ -94,6 +98,10 @@ export const Apps = {
     path: `${basePath}/EG.Applications.StateReporting/src/EdGraph.Applications.StateReporting.Web`,
     repo: "EG.Applications.StateReporting"
   },
+  imsadmin: {
+    path: `${basePath}/EG.Applications.IMSAdmin/src/EdGraph.Applications.IMSAdmin.Web`,
+    repo: "EG.Applications.IMSAdmin"
+  }
 }
 
 export const AppNames = Object.keys( Apps )

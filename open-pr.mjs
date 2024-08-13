@@ -40,7 +40,7 @@ const questions = [
     separator: ',',
     message: 'Reviewers (comma separated)',
     validate: value => ( value.includes( '@' ) && value.length > 0 ),
-    initial: 'pablo@edwire.com,jayson@edwire.com',
+    initial: 'pablo@edwire.com,jayson@edwire.com,jf@edwire.com',
   },
   {
     type: 'list',

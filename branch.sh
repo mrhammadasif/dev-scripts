@@ -20,8 +20,12 @@ doBranch() {
   echo "PWD: `pwd`"
   # According to new branching strategy
   # new branch will be created from main branch
-  echo "Shifting to main Branch:"
+  # undo changes
+  # git reset --hard
+  # echo "Shifting to main Branch / Updating to latest changes:"
   git checkout -q main
+  echo "Fetching Latest Changes from Main"
+  git fetch origin main
   git pull origin main
   echo "Checking out: ${Branch}"
   git checkout -B ${Branch}

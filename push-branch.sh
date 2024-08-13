@@ -9,5 +9,5 @@ fi
 for dir in "${Directories[@]}"; do
   cd $dir
   git checkout -q $1
-  git push origin $1
+  git push -u origin $1
 done

@@ -9,6 +9,66 @@ for key in "${!Directories[@]}"; do
   echo "-------------------------"
   echo "---- Going to ${key} ----"
   cd ${Directories[$key]}
+  
+  # ni
+
+  # git checkout -q development
+  # rm -rf node_modules
+  # rm -rf pnpm-lock.yaml
+  # ni
+
+  # git checkout -q main
+  # git fetch
+  # git pull origin main --rebase
+  # git checkout -B bug/9678-ChangeTenantWhenNotAuthorised
+  # git checkout -q development
+  # git merge --ff bug/9586-AllowDataImages
+  # git cherry-pick bug/9586-AllowDataImages
+  # git checkout --theirs package.json pnpm-lock.yaml
+  # nr refresh-token
+  # ni "@edgraph/shared@latest" --force
+  # git add .
+  # nr up -w
+  # ni
+  # nr lint --quiet --fix
+  # nr build:prod
+  # git commit -m "bug: #9678 #9679 Update Shared Repo for Changing the Tenant when not authorised and fix the Font not loading issue"
+
+  # git cherry-pick --continue
+  git push origin bug/9678-ChangeTenantWhenNotAuthorised
+  git checkout -q development
+  git merge bug/9678-ChangeTenantWhenNotAuthorised
+  # git checkout -q feat/8984-PaginatedTenantSelector
+  # git reset --hard HEAD~1
+
+  # ni
+  # na audit
+  # snyk test
+  # nr lint --fix --quiet
+
+  # git checkout -q development
+  # git merge fix/9468-UpdateAssetsUrl
+  
+  # nr build:prod
+  # ni
+  # na audit
+  # nr lint --fix --quiet
+  # nr build:prod
+  # git merge feat/9003-TenantSwitch
+  # git add .
+  # git add pnpm-lock.yaml
+  # git commit -m "security: Resolve Security Vulnerabilities #9452 #9455"
+  # git push origin feat/8984-PaginatedTenantSelector
+  # git push --set-upstream origin bug/9455-SecurityVuln
+
+  # git checkout -q development
+  # git merge bug/9455-SecurityVuln
+  # git push origin development
+  # git checkout -q bug/9455-SecurityVuln
+
+  # git fetch
+  # git show --summary --oneline
+  # git status
   # git checkout -B refactor/8099-UpgradeDeps
   # git merge fix/7950-SecurityAxios
   # git pull origin development
@@ -53,7 +113,7 @@ for key in "${!Directories[@]}"; do
   # git merge fix/8098-IndexNotRedirecting
   # git checkout fix/8098-IndexNotRedirecting
   # git push origin fix/8098-IndexNotRedirecting
-  az repos pr create --title "Fix the Redirection" --description "- fix the redirection (revert layouts plugin)\n- remove the unocss eslint plugin until team pushed a fix" --target-branch "main" --source-branch "fix/8098-IndexNotRedirecting" --open --repository "EG.Applications.Admin" --reviewers "pablo@edwire.com" --work-items 8098
+  # az repos pr create --title "Fix the Redirection" --description "- fix the redirection (revert layouts plugin)\n- remove the unocss eslint plugin until team pushed a fix" --target-branch "main" --source-branch "fix/8098-IndexNotRedirecting" --open --repository "EG.Applications.Admin" --reviewers "pablo@edwire.com" --work-items 8098
   # git status
   # git push origin development
 

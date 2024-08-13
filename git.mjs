@@ -22,7 +22,7 @@ yarg.command( "stageall", "Stage all Files", async ( args ) => {
 } )
 
 yarg.command("merge", "Merge Branch to Dev", async (args) => {
-  const appChoices = [await whichApps('apps', true)]
+  const appChoices = [await whichApps('apps')]
   
   const resp = await prompts([
     {
@@ -120,6 +120,13 @@ yarg.command( "latest", "Fetch Latest", async ( _args ) => {
     console.log( green( `All Processed` ) )
   }
 } )
+
+yarg.command( "branchbydate", "Get Branch Last Updated Date", async ( args ) => {
+  const appChoices = await whichApps()
+  appChoices.forEach(app => {
+    console.log(execSync(`git for-each-ref --sort=-committerdate refs/heads/ --format='%(committerdate:short) %(refname:short)'`, { cwd: Repos[app].path }).toString())
+  })
+})
 
 yarg.command( "branch", "Checkout Branch", async ( args ) => {
   const appChoices = await whichApps()
