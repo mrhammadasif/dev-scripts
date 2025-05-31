@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 import { Repos, AppNames, RepoNames } from "./common/directories.mjs"
 import { execSync } from "child_process"
-import { green } from 'kolorist'
-import { red } from 'kolorist'
 import prompts from "prompts"
 import { banner, whichApps } from './common/utils.mjs'
 
@@ -66,63 +64,33 @@ const questions = [
 
 ; ( async () => {
   const appChoices = await whichApps()
-  const args = await prompts( questions, { onCancel: () => process.exit( 1 ) } )
-  console.log( args )
-
-  let command = `az repos pr create`
-  // --repository "{repo}"
-  if ( args.targetBranch ) {
-    command += ` --target-branch "${args.targetBranch}"`
-  }
-
-  if ( args.sourceBranch ) {
-    command += ` --source-branch "${args.sourceBranch}"`
-  }
-
-  if ( args.title ) {
-    command += ` --title "${args.title}"`
-  }
   
-  if ( args.tags ) {
-    command += ` --labels ${args.tags.map( r => `"${r}"` ).join(" ")}`
-  }
+  // const confirmation = await prompts( {
+  //   type: 'confirm',
+  //   name: 'confirm',
+  //   message: red(`Do you want to run this command?`),
+  //   initial: true
+  // } )
 
-  if ( args.description ) {
-    command += ` --description "${args.description}"`
-  }
-
-  if ( args.reviewers ) {
-    command += ` --reviewers ${args.reviewers.map( r => `"${r}"` ).join(" ")}`
-  }
-
-  if ( args.workItems ) {
-    command += ` --work-items ${args.workItems.map( r => `${r}` ).join(" ")}`
-  }
-
-  if ( args.open ) {
-    command += ` --open`
-  }
-  console.log( `Running command: ${green(command)}` )
-  console.log( ' --- ' )
-  const confirmation = await prompts( {
-    type: 'confirm',
-    name: 'confirm',
-    message: red(`Do you want to run this command?`),
-    initial: true
-  } )
-
-  if(confirmation.confirm === true) {
+  // if(confirmation.confirm === true) {
     appChoices.forEach( appName => {
       const dir = Repos[appName].path
-      const repoName = Repos[appName].repo
-      const cmd = command.replace( /\{repo\}/g, repoName ).replace( /\{dir\}/g, dir )
+      // const repoName = Repos[appName].repo
       banner(appName, {
-        title: 'Open PR'
+        title: 'Package.json Duplicates',
       })
-      const output = execSync( cmd, { cwd: dir } )
-      console.log( output.toString() )
+
+      const cmd = `cat package.json | jq '.dependencies | keys | sort'`
+      const deps = JSON.parse(execSync(cmd, { cwd: dir }))
+      const cmd2 = `cat package.json | jq '.devDependencies | keys | sort'`
+      const devDeps = JSON.parse(execSync(cmd2, { cwd: dir }))
+      // console.table((deps))
+      // console.table((devDeps))
+      const commonDeps = deps.filter( dep => devDeps.includes( dep ) )
+      console.log( `Common dependencies: ${commonDeps.length}` )
+      console.table( commonDeps )
     } )
-  }
+  // }
 
 
 } )()

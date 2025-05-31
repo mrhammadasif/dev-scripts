@@ -21,8 +21,8 @@ declare -A DirectoriesRepo=(
   ["validation"]="EG.Applications.Validations"
   ["partner"]="EG.Applications.Partner"
   ["imsadmin"]="EG.Applications.IMSAdmin"
-  # ["mgmt"]="EG.Applications.Management"
-  # ["statereporting"]="EG.Applications.StateReporting"
+  ["mgmt"]="EG.Applications.Management"
+  ["statereporting"]="EG.Applications.StateReporting"
 )
 
 SharedRepo="/Users/hammadasif/projects/edwire/EG.Applications.Shared"

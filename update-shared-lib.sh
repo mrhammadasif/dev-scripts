@@ -10,6 +10,13 @@ else
   version="$1"
 fi
 
+# check if arg 2 present
+if [ -z "$2" ]; then
+  workItem=""
+else
+  workItem="$2"
+fi
+
 
 # cd into each directory and touch a text file
 # for key in "${!DirectoriesDebug[@]}"; do
@@ -20,12 +27,12 @@ for key in "${!Directories[@]}"; do
   echo "Updating: $key to the $version"
   # check if version is next
   if [ "$version" == "next" ]; then
-    pnpm add "@edgraph/shared@next"
+    pnpm add "@edgraph/shared@next" --force
   else
-    pnpm add "@edgraph/shared@$version"
+    pnpm add "@edgraph/shared@$version" --force
   fi
   # git add .
   git add package.json
   git add pnpm-lock.yaml
-  git commit -m "fix(#9595): Update shared library to $version; Allow data: images in CSP"
+  git commit -m "Update shared library to $version. fix: #$workItem"
 done

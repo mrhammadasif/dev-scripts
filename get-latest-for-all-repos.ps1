@@ -8,10 +8,10 @@ Get-AllFolders | ForEach-Object {
   Set-Location "$RootPath/$_"
 
   git fetch --all
-  git checkout -q main
-  git pull origin main --rebase
+  # git checkout -q main
+  # git rebase origin/main
   git checkout -q development
-  git pull origin development --rebase
+  git rebase origin/development
 }
 
 Reset-ClI

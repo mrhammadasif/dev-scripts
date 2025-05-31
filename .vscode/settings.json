@@ -21,14 +21,19 @@
   "i18n-ally.localesPaths": "locales",
   "i18n-ally.sortKeys": true,
   "prettier.enable": false,
-  "eslint.experimental.useFlatConfig": true,
+  "eslint.quiet": false,
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+  "eslint.useFlatConfig": true,
+  // Disable the default formatter, use eslint instead
   "editor.formatOnSave": false,
   // Auto fix
   "editor.codeActionsOnSave": {
-    "source.addMissingImports": "always",
-    "source.fixAll.eslint": "explicit",
+    "source.fixAll.eslint": "always",
     "source.organizeImports": "never"
   },
+  // Enable eslint for all supported languages
   "eslint.validate": [
     "javascript",
     "javascriptreact",
@@ -40,6 +45,18 @@
     "json",
     "jsonc",
     "yaml"
+  ],
+  // Silent the stylistic rules in you IDE, but still auto fix them
+  "eslint.rules.customizations": [
+    { "rule": "style/*", "severity": "warn" },
+    { "rule": "*-indent", "severity": "warn" },
+    { "rule": "*-spacing", "severity": "warn" },
+    { "rule": "*-spaces", "severity": "warn" },
+    { "rule": "*-order", "severity": "warn" },
+    { "rule": "*-dangle", "severity": "warn" },
+    { "rule": "*-newline", "severity": "warn" },
+    { "rule": "*quotes", "severity": "warn" },
+    { "rule": "*semi", "severity": "warn" }
   ],
   "files.associations": {
     "*.css": "postcss"

@@ -27,8 +27,8 @@ Get-AllFolders | ForEach-Object {
       return
     }
 
-    # REMOVE BRANCHES OLDER THAN 30 DAYS
-    if ($diff.Days -lt 30) {
+    # REMOVE BRANCHES OLDER THAN 60 DAYS
+    if ($diff.Days -lt 60) {
       Write-Host "$branch (Not Deleting. Last Commit: $dateStr)" -ForegroundColor Gray
       return
     }

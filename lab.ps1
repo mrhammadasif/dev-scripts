@@ -1,64 +1,59 @@
 . "$($PSScriptRoot)/common/repos.ps1"
 
+$author = "Hammad Asif"
+
 # $Dictionary = @{}
-
-Get-AllFolders | ForEach-Object {
-  Write-Host "###### $($_) #####" -ForegroundColor Yellow
+$Folders = Get-ChildItem -Directory -Name
+$Folders | ForEach-Object {
+  # Write-Host "###### $($_) #####" -ForegroundColor Yellow
   # Change the directory to the current folder
-  Set-Location "$RootPath/$_"
-  # $branch = (git branch | Select-String -Pattern "9455").Line?.TrimStart()
-  # if($branch -Match "\* ") {
-  #   $branch = $branch.Substring(2)
-  # }
-  # $proj = $_
-  # git branch --all
-  # $branches = git branch | cut -c3-
-  $branches = git for-each-ref --sort=-committerdate refs/heads/ --format='%(committerdate:short)+++%(refname:short)'
-  $branches | ForEach-Object {
-    $branch = $_.Trim()
-    # Get the date and compare it how old it is
-    $date = $branch.Split("+++")[0]
-    $date = [datetime]::Parse($date)
-    $diff = (Get-Date) - $date
-    $branch = $branch.Split("+++")[1]
-    if ($branch -eq "main") {
-      return
-    }
-    if ($branch -eq "development") {
-      return
-    }
-    if ($diff.Days -lt 21) {
-      Write-Host "$branch" -ForegroundColor Gray
-      return
-    }
-    Write-Host "$branch" -ForegroundColor Red
-    git branch -D $branch
-    # git remove branch
-  }
+  # Set-Location "$RootPath/$_"
   
-  # if ($branch -ne $null) {
-  #   Write-Host "$branch" -ForegroundColor Yellow
-  #   git checkout -q $branch
-  # }
-  #  else {
-  #   Write-Host "Branch not found" -ForegroundColor Red
-  #   git checkout -q main
-  #   git checkout -B bug/9455-SecurityVuln
-  # }
-  # $match = git branch | Select-String -Pattern "9455"
-  # if($match.Line -ne $null) {
-  #   Write-Host "$($match.Line.Substring(2))" -ForegroundColor Yellow
-  # }
-}
+  $gitFileName = "$($_)/.git/config"
+  # if exists
 
-# Write-Host ""
-# Write-Host ""
-# Write-Host "###### Repositories #####" -ForegroundColor Green
-# Write-Host $Dictionary
-# $Dictionary | ForEach-Object {
-#   Write-Host "$($_.Key) - $($_.Value)" -ForegroundColor Yellow
-# }
-# convert dictionary to JSON
-# $Dictionary | ConvertTo-Json | Out-File "$RootPath/repositories.json"
+  If (Test-Path $gitFileName) {
+    Write-Host "###### $($_) #####" -ForegroundColor Yellow
+    # Get the remote URL from the .git/config file
+    # $remoteUrl = (Get-Content $gitFileName | Select-String -Pattern 'url = (.*)' | ForEach-Object { $_.Matches.Groups[1].Value })[0]
+    # Write-Host "Remote URL: $remoteUrl"
+    # $Dictionary[$_]= $remoteUrl
+    # code $gitFileName
+    # az branches list --repository "$($_)"
+    $branchesOnline = az repos ref list --repository "$($_)" | & jq "[.[] | select((.creator.displayName | test($author))) | {name, displayName: .creator.displayName, email: .creator.uniqueName}]" | ConvertFrom-Json
+    if($branchesOnline.Count -eq 0) {
+      Write-Host "No branches found (created by $author) for repository: $($_)" -ForegroundColor Red
+      return
+    }
+    $branchesOnline | ForEach-Object {  
+      $branchName = $_.name
+      $displayName = $_.displayName
+      $email = $_.email
+      Write-Host "Branch: {$branchName}, Creator: {$displayName}, Email: {$email}"
+      
+      # if branchName contains "main" or "development" then skip
+      if ($branchName -like "*main*" -or $branchName -like "*development*") {
+        return
+      }
+      if ($branchName -like "*rel/*") {
+        return
+      }
+      $prs = az repos pr list --source-branch "$branchName" | jq '[.[] | {title, url, status, pullRequestId}]' | ConvertFrom-Json
+      if($prs.Count -eq 0) {
+        Write-Host "No PRs found for branch: $branchName" -ForegroundColor Red
+        return
+      }
+      $prs | Format-Table pullRequestId,status,title -AutoSize
+    }
+
+  }
+
+  
+  # git checkout main
+  # git branch --show
+  # git fetch --all
+  # git pull --rebase origin main
+  # git status
+}
 
 Reset-ClI

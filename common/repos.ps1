@@ -1,12 +1,6 @@
 # Get the directory
 $RootPath = "~/projects/edwire"
 
-# Write-Host "Root Directory: $RootPath" -ForegroundColor Green
-# $Continue = Read-Host "Do you want to continue in this directory? (Y/N)"
-# if($Continue -ne "Y") {
-#   exit
-# }
-
 if(-Not (Test-Path $RootPath)) {
   Write-Host "Directory not found" -ForegroundColor Red
   exit
