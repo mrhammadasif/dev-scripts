@@ -8,7 +8,7 @@ $Folders | ForEach-Object {
   # Write-Host "###### $($_) #####" -ForegroundColor Yellow
   # Change the directory to the current folder
   # Set-Location "$RootPath/$_"
-  
+  Set-Location "$RootPath/${$_}"
   $gitFileName = "$($_)/.git/config"
   $repoName = $_
 
@@ -27,15 +27,15 @@ $Folders | ForEach-Object {
       Write-Host
       return
     }
-    Write-Host "Visit URL: https://dev.azure.com/edwire/EW.Educate/_git/$repoName/branches"
+    Write-Host "Visit URL: https://dev.azure.com/edwire/EW.Educate/_git/$repoName/branches" -ForegroundColor DarkGray
     Write-Host
   
     $branchesOnline | ForEach-Object {  
       $branchName = $_.name
-      Write-Host "Branch: $($branchName.TrimStart("refs/heads/")):" -ForegroundColor Magenta
+      Write-Host "Branch: $($branchName.TrimStart("refs/heads/")):"
       $prs = az repos pr list --source-branch "$branchName" --repository "$repoName" | jq '[.[] | {title, url, status, pullRequestId}]' | ConvertFrom-Json
       if($prs.Count -eq 0) {
-        Write-Host "No PRs found for branch: $branchName" -ForegroundColor Red
+        Write-Host "No PRs found for branch: $branchName" -ForegroundColor DarkRed
         Write-Host
         return
       }

@@ -11,7 +11,18 @@ Get-AllFolders | ForEach-Object {
   If (Test-Path $gitFileName) {
     Write-Host "###### $repoName #####" -ForegroundColor Yellow
     Write-Host
-  
+    
+    git stash -u "before-cleaning-branches-${date}"
+    git reset --hard
+
+    git fetch --all --prune
+
+    git checkout -q development
+    git reset --hard origin/development
+    
+    git checkout -q main
+    git reset --hard origin/main
+    
   }
 }
 

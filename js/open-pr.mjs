@@ -84,7 +84,7 @@ const questions = [
   }
   
   if ( args.tags ) {
-    command += ` --labels ${args.tags.map( r => `"${r}"` ).join(" ")}`
+    command += ` --labels ${args.tags.map( r => `'${r}'` ).join(" ")}`
   }
 
   if ( args.description ) {

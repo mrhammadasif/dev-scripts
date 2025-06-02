@@ -9,31 +9,37 @@ if ($response -ine "y") {
 Write-Host "Deleting branches..." -ForegroundColor Green
 
 Get-AllFolders | ForEach-Object {
-  Write-Host "###### $($_) #####" -ForegroundColor Yellow
-  # Change the directory to the current folder
-  Set-Location "$RootPath/$_"
-  $branches = git for-each-ref --sort=-committerdate refs/heads/ --format='%(committerdate:short)+++%(refname:short)'
-  $branches | ForEach-Object {
-    $branch = $_.Trim()
-    # Get the date and compare it how old it is
-    $dateStr = $branch.Split("+++")[0]
-    $date = [datetime]::Parse($dateStr)
-    $diff = (Get-Date) - $date
-    $branch = $branch.Split("+++")[1]
-    if ($branch -eq "main") {
-      return
-    }
-    if ($branch -eq "development") {
-      return
-    }
+  Set-Location "$RootPath/$($_)"
+  $gitFileName = ".git/config"
+  
+  If (Test-Path $gitFileName) {
+    Write-Host "###### $($_) #####" -ForegroundColor Yellow
+    # Change the directory to the current folder
+    $branches = git for-each-ref --sort=-committerdate refs/heads/ --format='%(committerdate:short)+++%(refname:short)'
+    $branches | ForEach-Object {
+      $branch = $_.Trim()
+      # Get the date and compare it how old it is
+      $dateStr = $branch.Split("+++")[0]
+      $date = [datetime]::Parse($dateStr)
+      $diff = (Get-Date) - $date
+      $branch = $branch.Split("+++")[1]
+      if ($branch -eq "main") {
+        return
+      }
+      if ($branch -eq "development") {
+        return
+      }
 
-    # REMOVE BRANCHES OLDER THAN 60 DAYS
-    if ($diff.Days -lt 60) {
-      Write-Host "$branch (Not Deleting. Last Commit: $dateStr)" -ForegroundColor Gray
-      return
+      # REMOVE BRANCHES OLDER THAN 30 DAYS
+      if ($diff.Days -lt 30) {
+        Write-Host "$branch (Not Deleting. Last Commit: $dateStr)" -ForegroundColor Gray
+        return
+      }
+      Write-Host "Deleting: $branch (Last Commit: $dateStr)" -ForegroundColor DarkRed
+      git branch -D $branch
+      Write-Host
+      Write-Host
     }
-    Write-Host "Deleting: $branch" -ForegroundColor Red
-    git branch -D $branch
   }
   
 }
